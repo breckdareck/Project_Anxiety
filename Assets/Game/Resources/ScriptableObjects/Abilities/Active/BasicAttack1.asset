@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7b301734b5aa1a47a8d4727866e0cc1, type: 3}
+  m_Name: BasicAttack1
+  m_EditorClassIdentifier: 
+  _id: 0
+  _name: BasicAttack1
+  _description: 
+  _sprite: {fileID: 21300000, guid: 9762c02af48af8442961f927e5f6c59e, type: 3}
+  _level: 1
+  _buffsCanStack: 0
+  _buffs: []
+  _damagePercent: 100
+  _targetAmount: 1
+  _hitAmount: 1
+  _manaCost: 0
+  _cooldownTime: 1
+  _target: 1
+  _isOnCooldown: 0
+  _abilityAnimation: {fileID: 7400000, guid: c6a77af2f28ee03419b6f0c742fccae8, type: 2}
+  _projectileAsset: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
