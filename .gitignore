@@ -84,3 +84,6 @@ RiderScriptEditorPersistedState.asset
 Packages/packages-lock.json
 .idea/
 .plastic/
+/ProjectSettings/
+.vsconfig
+.gitattributes
