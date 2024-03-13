@@ -1,42 +1,59 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Project_Anxiety.Game.Utility
 {
     public class ObjectPool<T> where T : MonoBehaviour
     {
-        List<T> objectList;
-        T objectPrefab;
-        int poolSize;
-        Transform parent;
+        readonly Stack<T> objectList = new Stack<T>();
+        readonly T objectPrefab;
+        readonly Transform parent;
+        
+        public Action<T> OnObjectPulled = delegate { };
+        public Action<T> OnObjectReturned = delegate { };
         
         public ObjectPool(T prefab, int size, Transform parentTransform)
         {
-            objectList = new List<T>();
             objectPrefab = prefab;
-            poolSize = size;
             parent = parentTransform;
-            FillPool();
-        }
-
-        private void FillPool()
-        {
-            for (int i = 0; i < poolSize; i++)
+            
+            for (int i = 0; i < size; i++)
             {
-                T obj = GameObject.Instantiate(objectPrefab, parent);
-                obj.gameObject.SetActive(false);
-                objectList.Add(obj);
+                AddObjectToPool();
             }
+        }
+        
+        T AddObjectToPool()
+        {
+            T obj = GameObject.Instantiate(objectPrefab, parent);
+            obj.gameObject.SetActive(false);
+            objectList.Push(obj);
+            return obj;
         }
 
         public T GetPooledObject()
         {
-            foreach (T obj in objectList)
+            if (objectList.Count > 0)
             {
-                if (!obj.gameObject.activeSelf)
-                    return obj;
+                T obj = objectList.Pop();
+                obj.gameObject.SetActive(true);
+                OnObjectPulled.Invoke(obj);
+                return obj;
             }
-            return null;
+
+            T newObj = AddObjectToPool();
+            OnObjectPulled.Invoke(newObj);
+            return newObj;
         }
+
+        public void ReturnObjectToPool(T obj)
+        {
+            obj.gameObject.SetActive(false);
+            objectList.Push(obj);
+            OnObjectReturned.Invoke(obj);
+        }
+
+        public int GetObjectListCount() => objectList.Count;
     }
 }

@@ -219,6 +219,10 @@ namespace Project_Anxiety.Game.Units
         private IEnumerator SetInactiveOnDead()
         {
             yield return new WaitForSeconds(3);
+            if (_characterBase is Enemy enemy)
+            {
+                enemy.assignedObjectPool.ReturnObjectToPool(enemy);
+            }
             gameObject.SetActive(false);
         }
     

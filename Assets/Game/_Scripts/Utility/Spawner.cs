@@ -12,7 +12,8 @@ namespace Project_Anxiety.Game.Utility
         int amountToPool = 50;
         float spawnTime = 1;
         Transform parent;
-        ObjectPool<T> objectPool;
+        
+        public ObjectPool<T> objectPool;
         
         public void SetupSpawner(List<GameObject> spawnLocations, T objectPrefab, int amountToPool, float spawnTime, Transform parent)
         {
@@ -28,32 +29,12 @@ namespace Project_Anxiety.Game.Utility
         {
             while (true)
             {
-                T spawnedObject = objectPool.GetPooledObject();
-                if (spawnedObject != null)
-                {
-                    int randomSpawn = Random.Range(0, spawnLocations.Count);
-
-                    float startTime = Time.realtimeSinceStartup;
-                    while (Time.realtimeSinceStartup - startTime < spawnTime)
-                    {
-                        yield return null; // Yield until the specified spawnTime has passed
-                    }
-
-                    spawnedObject.transform.position = spawnLocations[randomSpawn].transform.position;
-                    spawnedObject.gameObject.SetActive(true);
-
-                    // If the spawned object has a Health component, revive it
-                    Health healthComponent = spawnedObject.GetComponent<Health>();
-                    if (healthComponent != null)
-                    {
-                        healthComponent.Revive();
-                    }
-                }
-                else
-                {
-                    // If no pooled object is available, wait for 1 second before trying again
-                    yield return new WaitForSecondsRealtime(1f);
-                }
+                yield return new WaitForSecondsRealtime(spawnTime);
+                if (objectPool.GetObjectListCount() <= 0) continue;
+                var spawnedObject = objectPool.GetPooledObject();
+                if (spawnedObject == null) continue;
+                var randomSpawn = Random.Range(0, spawnLocations.Count);
+                spawnedObject.transform.position = spawnLocations[randomSpawn].transform.position;
             }
         }
     }

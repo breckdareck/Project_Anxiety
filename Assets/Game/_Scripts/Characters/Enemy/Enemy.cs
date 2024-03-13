@@ -20,6 +20,8 @@ namespace Project_Anxiety.Game.Units
         private TouchingDirections touchingDirections;
         private Animator animator;
 
+        public ObjectPool<Enemy> assignedObjectPool;
+
         public enum WalkableDirection{Right,Left}
         private WalkableDirection _walkDirection;
         private Vector2 walkDirectionVector = Vector2.right;

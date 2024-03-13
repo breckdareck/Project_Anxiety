@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Project_Anxiety.Game.Units;
+using Sirenix.OdinInspector;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -12,13 +14,45 @@ namespace Project_Anxiety.Game.Utility
         [SerializeField] int amountToPool;
         [SerializeField] float spawnTime;
         [SerializeField] Transform parent;
-        private Spawner<Enemy> enemySpawner;
+        Spawner<Enemy> enemySpawner;
 
         private void Awake()
         {
             enemySpawner = new Spawner<Enemy>();
             enemySpawner.SetupSpawner(spawnLocations,enemyPrefab,amountToPool,spawnTime,parent);
+            
             StartCoroutine(enemySpawner.RespawnTimer());
         }
+
+        private void OnEnable()
+        {
+            enemySpawner.objectPool.OnObjectPulled += OnObjectPulledAction;
+            enemySpawner.objectPool.OnObjectReturned += OnObjectReturnedAction;
+        }
+
+        private void OnDisable()
+        {
+            enemySpawner.objectPool.OnObjectPulled -= OnObjectPulledAction;
+            enemySpawner.objectPool.OnObjectReturned -= OnObjectReturnedAction;
+        }
+
+        private void OnObjectPulledAction(Enemy obj)
+        {
+            Debug.Log("Object pulled from pool: " + obj.name);
+            if (obj.assignedObjectPool == null || obj.assignedObjectPool != enemySpawner.objectPool)
+                obj.assignedObjectPool = enemySpawner.objectPool;
+            // If the spawned object has a Health component, revive it
+            Health healthComponent = obj.GetComponent<Health>();
+            if (healthComponent != null)
+            {
+                healthComponent.Revive();
+            }
+        }
+
+        private void OnObjectReturnedAction(Enemy obj)
+        {
+            Debug.Log("Object returned to pool: " + obj.name);
+        }
+        
     }
 }
