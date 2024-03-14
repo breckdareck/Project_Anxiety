@@ -1284,8 +1284,8 @@ MonoBehaviour:
   - {fileID: 341450722}
   - {fileID: 2043582748}
   enemyPrefab: {fileID: 7130235086170997725, guid: 10994c361c48b2f41baaf112c154aaeb, type: 3}
-  amountToPool: 50
-  spawnTime: 0.2
+  amountToPool: 100
+  spawnTime: 1
   parent: {fileID: 495315130}
 --- !u!4 &495315130
 Transform:

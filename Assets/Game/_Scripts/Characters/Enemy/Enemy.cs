@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 namespace Project_Anxiety.Game.Units
 {
-    public sealed class Enemy : CharacterBase
+    public sealed class Enemy : CharacterBase, ISpawnable
     {
         [FormerlySerializedAs("_enemyInfo")] [SerializeField] private EnemyData enemyData;
         public EnemyData EnemyData => enemyData;
@@ -138,6 +138,15 @@ namespace Project_Anxiety.Game.Units
                 FlipDirections();
             }
         }
-        
+
+        public void Init()
+        {
+            // If the spawned object has a Health component, revive it
+            Health healthComponent = this.gameObject.GetComponent<Health>();
+            if (healthComponent != null)
+            {
+                healthComponent.Revive();
+            }
+        }
     }
 }

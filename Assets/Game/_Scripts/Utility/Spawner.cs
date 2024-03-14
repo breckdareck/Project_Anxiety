@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Project_Anxiety.Game.Utility
 {
-    public class Spawner<T> where T : MonoBehaviour
+    public class Spawner<T> where T : MonoBehaviour, ISpawnable
     {
         List<GameObject> spawnLocations;
         T objectPrefab;

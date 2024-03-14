@@ -41,12 +41,8 @@ namespace Project_Anxiety.Game.Utility
             Debug.Log("Object pulled from pool: " + obj.name);
             if (obj.assignedObjectPool == null || obj.assignedObjectPool != enemySpawner.objectPool)
                 obj.assignedObjectPool = enemySpawner.objectPool;
-            // If the spawned object has a Health component, revive it
-            Health healthComponent = obj.GetComponent<Health>();
-            if (healthComponent != null)
-            {
-                healthComponent.Revive();
-            }
+            
+            obj.Init();
         }
 
         private void OnObjectReturnedAction(Enemy obj)
