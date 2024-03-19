@@ -17,16 +17,53 @@ namespace Project_Anxiety.Game.Units
         public BuffSystem BuffSystem { get; private set; }
         public PlayerUI PlayerUI { get; private set; }
         public PlayerInput PlayerInput { get; private set; }
-
-
+        [SerializeField] InputReader input;
+        
         private TouchingDirections _touchingDirections;
     
-        private Vector2 moveInput;
         [SerializeField] private float walkSpeed = 5f;
         [SerializeField] private float runSpeed = 8f;
         [SerializeField] private float jumpImpulse = 6f;
         [ShowInInspector, ReadOnly] private float crouchingSpeed => walkSpeed / 2;
+
+        private Vector2 moveInput;
     
+        
+        public override void Awake()
+        {
+            base.Awake();
+            Health = GetComponent<Health>();
+            Stats = GetComponent<Stats>();
+            JobSystem = GetComponent<JobSystem>();
+            PlayerCombatSystem = GetComponent<PlayerCombatSystem>();
+            BuffSystem = GetComponent<BuffSystem>();
+            PlayerUI = GetComponent<PlayerUI>();
+            PlayerInput = GetComponent<PlayerInput>();
+            _touchingDirections = GetComponent<TouchingDirections>();
+        }
+
+        private void FixedUpdate()
+        {
+            if (!KnockedBack)
+            {
+                RB.velocity = new Vector2(moveInput.x * CurrentMoveSpeed, RB.velocity.y);
+                Animator.SetFloat(AnimationStrings.yVelocity, RB.velocity.y);
+            }
+        }
+    
+        private void SetFacingDirection(Vector2 moveInput)
+        {
+            // TODO - Make sure the player doesnt turn when attacking.
+            if (moveInput.x > 0 && !IsFacingRight)
+            {
+                IsFacingRight = true;
+            }
+            else if (moveInput.x < 0 && IsFacingRight)
+            {
+                IsFacingRight = false;
+            }
+        }
+        
         public float CurrentMoveSpeed
         {
             get
@@ -59,7 +96,7 @@ namespace Project_Anxiety.Game.Units
         }
 
         public float JumpImpulse => jumpImpulse;
-    
+
         private bool _isMoving = false;
         public bool IsMoving
         {
@@ -111,45 +148,8 @@ namespace Project_Anxiety.Game.Units
         public bool CanMove => Animator.GetBool(AnimationStrings.canMove);
 
         public bool KnockedBack = false;
-    
-        public override void Awake()
-        {
-            base.Awake();
-            Health = GetComponent<Health>();
-            Stats = GetComponent<Stats>();
-            JobSystem = GetComponent<JobSystem>();
-            PlayerCombatSystem = GetComponent<PlayerCombatSystem>();
-            BuffSystem = GetComponent<BuffSystem>();
-            PlayerUI = GetComponent<PlayerUI>();
-            PlayerInput = GetComponent<PlayerInput>();
-            _touchingDirections = GetComponent<TouchingDirections>();
-        }
-
-        private void FixedUpdate()
-        {
-            if (!KnockedBack)
-            {
-                RB.velocity = new Vector2(moveInput.x * CurrentMoveSpeed, RB.velocity.y);
-                Animator.SetFloat(AnimationStrings.yVelocity, RB.velocity.y);
-            }
-        }
-    
-        private void SetFacingDirection(Vector2 moveInput)
-        {
-            // TODO - Make sure the player doesnt turn when attacking.
-            if (moveInput.x > 0 && !IsFacingRight)
-            {
-                IsFacingRight = true;
-            }
-            else if (moveInput.x < 0 && IsFacingRight)
-            {
-                IsFacingRight = false;
-            }
-        }
-
-
-        #region PlayerInput
-
+        
+        
         public void OnMove(InputAction.CallbackContext context)
         {
             moveInput = context.ReadValue<Vector2>();
@@ -165,63 +165,47 @@ namespace Project_Anxiety.Game.Units
                 IsMoving = false;
             }
         }
-    
+
         public void OnRun(InputAction.CallbackContext context)
         {
             if (context.started)
-            {
                 IsRunning = true;
-            }
-            else if (context.canceled)
-            {
-                IsRunning = false;
-            }
-        
+            else if (context.canceled) IsRunning = false;
         }
 
         public void OnAttack(InputAction.CallbackContext context)
         {
             // TODO - Fix this whenever I want to be able to let player attack in the air.
-            if (context.started && _touchingDirections.IsGrounded)
-            {
-                Animator.SetTrigger(AnimationStrings.attackTrigger);
-                //PlayerCombatSystem.UseAbility(JobSystem.CurrentJob.JobInfo.JobAbilities.Find(x => x.Name == "BasicAttack"));
-            }
+            if (context.started && _touchingDirections.IsGrounded) Animator.SetTrigger(AnimationStrings.attackTrigger);
+            //PlayerCombatSystem.UseAbility(JobSystem.CurrentJob.JobInfo.JobAbilities.Find(x => x.Name == "BasicAttack"));
         }
 
         public void OnJump(InputAction.CallbackContext context)
         {
             //if(context.started && _touchingDirections.IsGrounded && CanMove && )
-            
+
             if (context.started && _touchingDirections.IsGrounded && CanMove)
             {
                 Animator.SetTrigger(AnimationStrings.jumpTrigger);
-            
+
                 RB.velocity = new Vector2(RB.velocity.x, jumpImpulse + Stats.BonusJumpImpulse);
             }
         }
-
-        public void OnOpenAbilityWindow(InputAction.CallbackContext context)
-        {
-            if (context.performed)
-            {
-                PlayerUI.AbilityWindow.SetActive(!PlayerUI.AbilityWindow.activeSelf);
-            }
-        }
-
-        public void OnOpenAttributeWindow(InputAction.CallbackContext context)
-        {
-            if (context.performed)
-            {
-                PlayerUI.StatWindow.SetActive(!PlayerUI.StatWindow.activeSelf);
-            }
-        }
-
+        
         public void OnHotBarAction(int slot)
         {
             PlayerCombatSystem.UseActiveAbility(HotBarManager.Instance.HotBarSlots[slot]?.activeAbilityData);
         }
         
-        #endregion
+        public void OnOpenAbilityWindow(InputAction.CallbackContext context)
+        {
+            if (context.performed) PlayerUI.AbilityWindow.SetActive(!PlayerUI.AbilityWindow.activeSelf);
+        }
+
+        public void OnOpenAttributeWindow(InputAction.CallbackContext context)
+        {
+            if (context.performed) PlayerUI.StatWindow.SetActive(!PlayerUI.StatWindow.activeSelf);
+        }
+
     }
 }

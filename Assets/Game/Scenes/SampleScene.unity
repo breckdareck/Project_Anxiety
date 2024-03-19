@@ -255,6 +255,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2550455834014744212, guid: 1313621cfe31a0f41b8defc5c9978578, type: 3}
+      propertyPath: input
+      value: 
+      objectReference: {fileID: 11400000, guid: 493c608e2d033f64baf5140d41615031, type: 2}
     - target: {fileID: 2900891457836071355, guid: 1313621cfe31a0f41b8defc5c9978578, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1285,7 +1289,7 @@ MonoBehaviour:
   - {fileID: 2043582748}
   enemyPrefab: {fileID: 7130235086170997725, guid: 10994c361c48b2f41baaf112c154aaeb, type: 3}
   amountToPool: 100
-  spawnTime: 1
+  spawnTime: 0.2
   parent: {fileID: 495315130}
 --- !u!4 &495315130
 Transform:
